@@ -6,7 +6,7 @@ import './i18n';
 import './index.css';
 
 const images = {
-  hero: '/spiaggia-cala-brandinchi-panoramica.webp',
+  hero: '/Cala-Brandinchi.webp',
   about: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80',
   living: '/soggiorno.webp',
   bedroom1: '/camera.webp',
