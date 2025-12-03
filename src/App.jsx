@@ -209,9 +209,75 @@ function Experiences() {
 
 function Booking() {
   const { t } = useTranslation();
-  const calendarId = '30b4ce93b122922faa6a2d31336dca98611c0790fdd3732491f40593b14f2557@group.calendar.google.com';
-  const calendarSrc = `https://calendar.google.com/calendar/embed?src=${encodeURIComponent(calendarId)}&ctz=Europe%2FRome&mode=MONTH&showTitle=0&showNav=1&showPrint=0&showTabs=0&showCalendars=0&showTz=0&showDate=1&bgcolor=%23ffffff&color=%23D50000`;
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [busyDates, setBusyDates] = useState([]);
+  const [loading, setLoading] = useState(true);
   
+  const calendarId = '30b4ce93b122922faa6a2d31336dca98611c0790fdd3732491f40593b14f2557@group.calendar.google.com';
+  const apiKey = 'AIzaSyBNlYH01_9Hc5S1J9vuFmu2nUqBZJNAXxs'; // Public API key for read-only calendar
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      setLoading(true);
+      const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+      const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 2, 0);
+      
+      try {
+        const response = await fetch(
+          `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events?key=${apiKey}&timeMin=${startOfMonth.toISOString()}&timeMax=${endOfMonth.toISOString()}&singleEvents=true`
+        );
+        const data = await response.json();
+        
+        if (data.items) {
+          const dates = [];
+          data.items.forEach(event => {
+            const start = new Date(event.start.date || event.start.dateTime);
+            const end = new Date(event.end.date || event.end.dateTime);
+            for (let d = new Date(start); d < end; d.setDate(d.getDate() + 1)) {
+              dates.push(new Date(d).toDateString());
+            }
+          });
+          setBusyDates(dates);
+        }
+      } catch (error) {
+        console.log('Calendar fetch error:', error);
+      }
+      setLoading(false);
+    };
+    fetchEvents();
+  }, [currentDate]);
+
+  const getDaysInMonth = (date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    return { firstDay: firstDay === 0 ? 6 : firstDay - 1, daysInMonth };
+  };
+
+  const { firstDay, daysInMonth } = getDaysInMonth(currentDate);
+  const today = new Date().toDateString();
+  
+  const prevMonth = () => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1));
+  const nextMonth = () => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1));
+  
+  const monthNames = {
+    it: ['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno', 'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'],
+    en: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+    de: ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember']
+  };
+  
+  const dayNames = {
+    it: ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'],
+    en: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    de: ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So']
+  };
+
+  const { i18n } = useTranslation();
+  const lang = i18n.language || 'it';
+  const months = monthNames[lang] || monthNames.it;
+  const days = dayNames[lang] || dayNames.it;
+
   const scrollToContact = () => {
     document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -225,16 +291,55 @@ function Booking() {
             <h2 className="section-header__title">{t('booking.title')}</h2>
             <p className="section-header__description" style={{ color: 'rgba(255,255,255,0.8)' }}>{t('booking.calendarDesc')}</p>
           </div>
-          <div className="booking__calendar">
-            <iframe 
-              src={calendarSrc}
-              style={{ border: 0, borderRadius: '8px' }}
-              width="100%"
-              height="400"
-              frameBorder="0"
-              scrolling="no"
-              title="Disponibilità Villa Laura"
-            />
+          <div className="booking__calendar" style={{ background: 'white', borderRadius: '12px', padding: '1.5rem', maxWidth: '500px', margin: '0 auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+              <button onClick={prevMonth} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: '#1a3a2f' }}>‹</button>
+              <h3 style={{ margin: 0, color: '#1a3a2f', fontFamily: "'Cormorant Garamond', serif" }}>{months[currentDate.getMonth()]} {currentDate.getFullYear()}</h3>
+              <button onClick={nextMonth} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: '#1a3a2f' }}>›</button>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px', textAlign: 'center' }}>
+              {days.map(day => (
+                <div key={day} style={{ padding: '8px', fontWeight: '600', color: '#1a3a2f', fontSize: '0.85rem' }}>{day}</div>
+              ))}
+              {[...Array(firstDay)].map((_, i) => (
+                <div key={`empty-${i}`} style={{ padding: '8px' }}></div>
+              ))}
+              {[...Array(daysInMonth)].map((_, i) => {
+                const day = i + 1;
+                const dateStr = new Date(currentDate.getFullYear(), currentDate.getMonth(), day).toDateString();
+                const isBusy = busyDates.includes(dateStr);
+                const isToday = dateStr === today;
+                const isPast = new Date(currentDate.getFullYear(), currentDate.getMonth(), day) < new Date(new Date().setHours(0,0,0,0));
+                
+                return (
+                  <div
+                    key={day}
+                    style={{
+                      padding: '10px',
+                      borderRadius: '8px',
+                      background: isBusy ? '#e74c3c' : isPast ? '#f0f0f0' : '#27ae60',
+                      color: isBusy || (!isPast) ? 'white' : '#999',
+                      fontWeight: isToday ? '700' : '400',
+                      border: isToday ? '2px solid #c9a961' : 'none',
+                      fontSize: '0.9rem'
+                    }}
+                  >
+                    {day}
+                  </div>
+                );
+              })}
+            </div>
+            {loading && <p style={{ textAlign: 'center', color: '#666', marginTop: '1rem' }}>Loading...</p>}
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '1.5rem', marginTop: '1rem', fontSize: '0.85rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <div style={{ width: '16px', height: '16px', borderRadius: '4px', background: '#27ae60' }}></div>
+                <span style={{ color: '#666' }}>{lang === 'de' ? 'Verfügbar' : lang === 'en' ? 'Available' : 'Disponibile'}</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <div style={{ width: '16px', height: '16px', borderRadius: '4px', background: '#e74c3c' }}></div>
+                <span style={{ color: '#666' }}>{lang === 'de' ? 'Belegt' : lang === 'en' ? 'Booked' : 'Occupato'}</span>
+              </div>
+            </div>
           </div>
           <div className="booking__cta" style={{ marginTop: '2rem', textAlign: 'center' }}>
             <p style={{ color: 'rgba(255,255,255,0.8)', marginBottom: '1rem' }}>{t('booking.ctaText')}</p>
