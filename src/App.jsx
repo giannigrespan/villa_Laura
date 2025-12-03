@@ -10,7 +10,7 @@ const images = {
   about: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80',
   living: '/soggiorno.webp',
   bedroom1: '/camera.webp',
-  bedroom2: '/camera.webp',
+  bedroom2: '/cameretta.jpg',
   kitchen: '/cucina.webp',
   bathroom: '/bagno.webp',
   outdoor: '/terrazzo.webp',
