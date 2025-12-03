@@ -6,7 +6,7 @@ import './i18n';
 import './index.css';
 
 const images = {
-  hero: 'https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?w=1920&q=80',
+  hero: '/Cala-Goloritze.jpeg',
   about: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80',
   living: '/soggiorno.webp',
   bedroom1: '/camera.webp',
