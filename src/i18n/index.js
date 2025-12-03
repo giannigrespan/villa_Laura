@@ -152,7 +152,10 @@ const resources = {
       },
       booking: {
         title: 'Prenota il tuo Soggiorno',
-        subtitle: 'Verifica disponibilità e prenota direttamente',
+        subtitle: 'Verifica Disponibilità',
+        calendarDesc: 'Consulta il calendario per verificare la disponibilità di Villa Laura',
+        ctaText: 'Hai trovato le date giuste? Contattaci per prenotare!',
+        ctaButton: 'Richiedi Prenotazione',
         checkAvailability: 'Verifica Disponibilità'
       },
       footer: {
@@ -316,7 +319,10 @@ const resources = {
       },
       booking: {
         title: 'Book Your Stay',
-        subtitle: 'Check availability and book directly',
+        subtitle: 'Check Availability',
+        calendarDesc: 'Check the calendar to see Villa Laura availability',
+        ctaText: 'Found the right dates? Contact us to book!',
+        ctaButton: 'Request Booking',
         checkAvailability: 'Check Availability'
       },
       footer: {
@@ -480,7 +486,10 @@ const resources = {
       },
       booking: {
         title: 'Buchen Sie Ihren Aufenthalt',
-        subtitle: 'Verfügbarkeit prüfen und direkt buchen',
+        subtitle: 'Verfügbarkeit Prüfen',
+        calendarDesc: 'Überprüfen Sie den Kalender für die Verfügbarkeit von Villa Laura',
+        ctaText: 'Die richtigen Termine gefunden? Kontaktieren Sie uns zum Buchen!',
+        ctaButton: 'Buchung Anfragen',
         checkAvailability: 'Verfügbarkeit Prüfen'
       },
       footer: {
