@@ -61,7 +61,7 @@ function Hero() {
   const { t } = useTranslation();
   return (
     <section id="home" className="hero">
-      <div className="hero__background" style={{ backgroundImage: `linear-gradient(to bottom, rgba(26, 58, 47, 0.4) 0%, rgba(26, 58, 47, 0.6) 100%), url(${images.hero})` }} />
+      <div className="hero__background" style={{ backgroundImage: `linear-gradient(to bottom, rgba(26, 58, 47, 0.2) 0%, rgba(26, 58, 47, 0.4) 100%), url(${images.hero})` }} />
       <div className="hero__content">
         <p className="hero__welcome">{t('hero.welcome')}</p>
         <h1 className="hero__title">{t('hero.title')}</h1>
